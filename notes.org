@@ -1,0 +1,74 @@
+* Notes
+
+Cookies:
+- Cookies: small pieces of information that are sent from the server to the client
+- Cookies are then stored in the client's browser and sent back to the server with each subsequent request
+- Cookies are domain specific, meaning they are stored separately for each individual website a user visits
+
+HTTP:
+- HTTP is a stateless protocol since it doesn't have information about each client for all requests
+
+RFC For Cookies:
+- This is the official RFC document for cookies:
+- https://www.rfc-editor.org/rfc/rfc6265
+- Related contents:
+#+begin_src text
+This section outlines a way for an origin server to send state
+information to a user agent and for the user agent to return the
+state information to the origin server.
+
+To store state, the origin server includes a Set-Cookie header in an
+HTTP response.  In subsequent requests, the user agent returns a
+Cookie request header to the origin server.  The Cookie header
+contains cookies the user agent received in previous Set-Cookie
+headers.  The origin server is free to ignore the Cookie header or
+use its contents for an application-defined purpose.
+#+end_src
+
+Related example from RFC document:
+#+begin_src bash
+== Server -> User Agent ==
+Set-Cookie: SID=31d4d96e407aad42
+
+== User Agent -> Server ==
+Cookie: SID=31d4d96e407aad42
+#+end_src
+
+In this example:
+- Server: HTTP server
+- User Agent: client browser
+
+Within The Context Of An Article Website That Limits Page Views On Articles:
+- Response from server when a visitor views an article:
+#+begin_src bash
+== Server -> User Agent ==
+Set-Cookie: pageviews_remaining=5
+#+end_src
+- Cookie that the client browser includes on subsequent article views:
+#+begin_src bash
+== User Agent -> Server ==
+Cookie: pageviews_remaining=5
+#+end_src
+
+Ruby On Rails can encrypt and sign a cookie known as a 'session' using the 'session()' method, which is available within a controller, and acts like a hash:
+#+begin_src ruby
+session[:pageviews_remaining] = 5
+#+end_src
+
+The related configuration key that is responsible for securing this is located in the 'config/credentials.yml.enc' file of a given Ruby On Rails project.
+
+This is how Ruby signs a particular cookie:
+#+begin_src ruby
+  # sign(message: string, key: string) -> signature: string
+  def sign(message, key):
+       # cryptographic magic here
+       return signature
+  end
+#+end_src
+
+Answers To 'Check Your Understanding':
+- Q1. What do we mean when we say that HTTP is stateless?
+- Answer: HTTP is a stateless protocol since it doesn't have information about each client for all requests
+- Q2. What Rails method can you use to protect cookies from being tampered with by users? What two things does Rails do to secure the cookie?
+- Answer: Use the 'sessions' method to create a cookies
+- Answer 2: Rails both encrypts and signs a given cookie
